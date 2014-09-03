@@ -1,0 +1,13 @@
+*~
+.DS_Store
+
+#Xcode
+
+*/build/*
+*.pbxuser
+!default.pbxuser
+xcuserdata
+project.xcworkspace
+
+# Pods
+Pods/*
