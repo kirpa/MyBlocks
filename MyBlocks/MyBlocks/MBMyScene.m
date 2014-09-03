@@ -11,27 +11,31 @@
 typedef NS_ENUM(NSUInteger, kGameState)
 {
     GSPlaying,
-    GSWin,
     GSLose
 };
 
 @interface MBMyScene()
 
+@property (nonatomic) SKNode *viewPort;
 @property (nonatomic) SKSpriteNode *previousBlock;
 @property (nonatomic) SKSpriteNode *currentBlock;
 @property (nonatomic) int stoppedBlocks;
 @property (nonatomic) kGameState gameState;
+@property (nonatomic) int currentLevel;
 
 @end
 
-static const int kTotalBlocks = 6;
-static const NSTimeInterval kDefaultAnimationDuration = 3.0;
+static const NSTimeInterval kDefaultBlockMovementDuration = 2.0;
+static const NSTimeInterval kViewportScaleDuration = 1.0;
+static const CGFloat kBlockWidth = 54.;
+static const CGFloat kScaleStep = 0.8;
+static const CGFloat kUpscaleThreshhold = 0.6;
 
 @implementation MBMyScene
 
 - (void)animateBlock:(SKSpriteNode *)block
 {
-    NSTimeInterval duration = kDefaultAnimationDuration / (self.stoppedBlocks + 1);
+    NSTimeInterval duration = kDefaultBlockMovementDuration;
     CGFloat nextX = block.position.x < self.size.width / 2 ?
         self.size.width - block.size.width / 2 :
         block.size.width / 2;
@@ -57,7 +61,7 @@ static const NSTimeInterval kDefaultAnimationDuration = 3.0;
 - (void)addBlock
 {
     SKSpriteNode *result = [[SKSpriteNode alloc] initWithColor:[self randomColor]
-                                                          size:CGSizeMake(self.size.height / kTotalBlocks, self.size.height / kTotalBlocks)];
+                                                          size:CGSizeMake(kBlockWidth, kBlockWidth)];
     CGFloat nextLine;
     if (self.currentBlock){
         nextLine = self.currentBlock.position.y + result.size.height;
@@ -66,18 +70,31 @@ static const NSTimeInterval kDefaultAnimationDuration = 3.0;
     }
     result.position = CGPointMake(result.size.width / 2, nextLine);
     [self animateBlock:result];
-    [self addChild:result];
+    [self.viewPort addChild:result];
     self.previousBlock = self.currentBlock;
     self.currentBlock = result;
+    [self checkScale];
+}
+
+- (void)lowerBlock
+{
+    [self.currentBlock removeAllActions];
+    self.currentBlock.position = CGPointMake(self.currentBlock.position.x, self.currentBlock.position.y - kBlockWidth);
+    [self animateBlock:self.currentBlock];
+    [self checkScale];
 }
 
 - (void)resetGame
 {
-    [self removeAllChildren];
+    [self.viewPort removeFromParent];
+    self.viewPort = [SKNode node];
+    [self addChild:self.viewPort];
+
     self.gameState = GSPlaying;
     self.currentBlock = nil;
     self.previousBlock = nil;
     self.stoppedBlocks = 0;
+    self.currentLevel = 0;
     [self addBlock];
 }
 
@@ -90,14 +107,27 @@ static const NSTimeInterval kDefaultAnimationDuration = 3.0;
     [self addChild:textNode];
 }
 
+- (CGFloat)visiblePortionHeight
+{
+    return self.size.height / self.viewPort.yScale;
+}
+
+- (void)checkScale
+{
+    CGFloat visibleBlockTop = CGRectGetMaxY(self.currentBlock.frame);
+    CGFloat visiblePortion = [self visiblePortionHeight];
+    if (visibleBlockTop > visiblePortion) {
+        CGFloat nextScale = self.viewPort.yScale * kScaleStep;
+        [self.viewPort runAction:[SKAction scaleTo:nextScale duration:kViewportScaleDuration]];
+    } else if (visiblePortion * kUpscaleThreshhold > visibleBlockTop) {
+        CGFloat nextScale = MIN(self.viewPort.yScale / kScaleStep, 1.0);
+        [self.viewPort runAction:[SKAction scaleTo:nextScale duration:kViewportScaleDuration]];
+    }
+}
+
 - (void)showLose
 {
     [self addLabelWithText:@"You lose!"];
-}
-
-- (void)showWin
-{
-    [self addLabelWithText:@"You won!"];
 }
 
 - (kGameState)checkGameState
@@ -106,8 +136,6 @@ static const NSTimeInterval kDefaultAnimationDuration = 3.0;
     if (abs(difference) > self.currentBlock.size.width / 2) {
         if (self.stoppedBlocks > 1)
             return GSLose;
-    } else if (self.stoppedBlocks == kTotalBlocks) {
-        return GSWin;
     }
 
     return GSPlaying;
@@ -121,6 +149,18 @@ static const NSTimeInterval kDefaultAnimationDuration = 3.0;
     return self;
 }
 
+- (void)didMoveToView:(SKView *)view
+{
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized)];
+    tapRecognizer.numberOfTapsRequired = 1;
+    [self.view addGestureRecognizer:tapRecognizer];
+
+    UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc]
+                                                 initWithTarget:self action:@selector(swipeRecognized)];
+    swipeRecognizer.direction = UISwipeGestureRecognizerDirectionRight | UISwipeGestureRecognizerDirectionLeft | UISwipeGestureRecognizerDirectionUp | UISwipeGestureRecognizerDirectionDown;
+    [self.view addGestureRecognizer:swipeRecognizer];
+}
+
 - (void)stopCurrentBlock
 {
     self.stoppedBlocks++;
@@ -129,19 +169,22 @@ static const NSTimeInterval kDefaultAnimationDuration = 3.0;
     if (self.gameState == GSLose) {
         [self showLose];
         return;
-    } else if (self.gameState == GSWin) {
-        [self showWin];
-        return;
     }
+
     [self addBlock];
 }
 
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)tapRecognized
 {
     if (self.gameState == GSPlaying)
         [self stopCurrentBlock];
     else
         [self resetGame];
+}
+
+- (void)swipeRecognized
+{
+    [self lowerBlock];
 }
 
 @end
