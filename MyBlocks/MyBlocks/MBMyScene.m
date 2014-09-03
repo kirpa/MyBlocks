@@ -58,6 +58,11 @@ static const CGFloat kUpscaleThreshhold = 0.6;
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
+- (CGPoint)randomPositionForY:(CGFloat)y
+{
+    return CGPointMake(arc4random_uniform(self.size.width), y);
+}
+
 - (void)addBlock
 {
     SKSpriteNode *result = [[SKSpriteNode alloc] initWithColor:[self randomColor]
@@ -68,7 +73,7 @@ static const CGFloat kUpscaleThreshhold = 0.6;
     } else {
         nextLine = result.size.height / 2;
     }
-    result.position = CGPointMake(result.size.width / 2, nextLine);
+    result.position = [self randomPositionForY:nextLine];
     [self animateBlock:result];
     [self.viewPort addChild:result];
     self.previousBlock = self.currentBlock;
