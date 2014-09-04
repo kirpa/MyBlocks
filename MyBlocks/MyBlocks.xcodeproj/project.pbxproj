@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD3D786E19B918B100DD3EB1 /* MBBonusBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = DD3D786D19B918B100DD3EB1 /* MBBonusBlock.m */; };
+		DD3D787119B919D400DD3EB1 /* Globals.m in Sources */ = {isa = PBXBuildFile; fileRef = DD3D787019B919D400DD3EB1 /* Globals.m */; };
 		DDAC191419999A5000C35ED4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAC191319999A5000C35ED4 /* Foundation.framework */; };
 		DDAC191619999A5000C35ED4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAC191519999A5000C35ED4 /* CoreGraphics.framework */; };
 		DDAC191819999A5000C35ED4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAC191719999A5000C35ED4 /* UIKit.framework */; };
@@ -37,6 +39,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DD3D786C19B918B100DD3EB1 /* MBBonusBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBBonusBlock.h; sourceTree = "<group>"; };
+		DD3D786D19B918B100DD3EB1 /* MBBonusBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBBonusBlock.m; sourceTree = "<group>"; };
+		DD3D786F19B919D400DD3EB1 /* Globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Globals.h; sourceTree = "<group>"; };
+		DD3D787019B919D400DD3EB1 /* Globals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Globals.m; sourceTree = "<group>"; };
 		DDAC191019999A5000C35ED4 /* MyBlocks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyBlocks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDAC191319999A5000C35ED4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		DDAC191519999A5000C35ED4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -128,6 +134,10 @@
 				DDAC192B19999A5000C35ED4 /* MBViewController.m */,
 				DDAC192D19999A5000C35ED4 /* MBMyScene.h */,
 				DDAC192E19999A5000C35ED4 /* MBMyScene.m */,
+				DD3D786C19B918B100DD3EB1 /* MBBonusBlock.h */,
+				DD3D786D19B918B100DD3EB1 /* MBBonusBlock.m */,
+				DD3D786F19B919D400DD3EB1 /* Globals.h */,
+				DD3D787019B919D400DD3EB1 /* Globals.m */,
 				DDAC193019999A5000C35ED4 /* Spaceship.png */,
 				DDAC193219999A5000C35ED4 /* Images.xcassets */,
 				DDAC191C19999A5000C35ED4 /* Supporting Files */,
@@ -263,9 +273,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD3D786E19B918B100DD3EB1 /* MBBonusBlock.m in Sources */,
 				DDAC192219999A5000C35ED4 /* main.m in Sources */,
 				DDAC192F19999A5000C35ED4 /* MBMyScene.m in Sources */,
 				DDAC192C19999A5000C35ED4 /* MBViewController.m in Sources */,
+				DD3D787119B919D400DD3EB1 /* Globals.m in Sources */,
 				DDAC192619999A5000C35ED4 /* MBAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -473,6 +485,7 @@
 				DDAC194B19999A5000C35ED4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DDAC194C19999A5000C35ED4 /* Build configuration list for PBXNativeTarget "MyBlocksTests" */ = {
 			isa = XCConfigurationList;
@@ -481,6 +494,7 @@
 				DDAC194E19999A5000C35ED4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
