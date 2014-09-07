@@ -8,6 +8,7 @@
 
 #import "MBMyScene.h"
 #import "MBBonusBlock.h"
+#import "MBHUD.h"
 
 typedef NS_ENUM(NSUInteger, kGameState)
 {
@@ -24,7 +25,8 @@ typedef NS_ENUM(NSUInteger, kGameState)
 @property (nonatomic) kGameState gameState;
 @property (nonatomic) int currentLevel;
 @property (nonatomic) NSMutableArray *bonuses;
-@property (nonatomic) CGFloat viewPortScale;;
+@property (nonatomic) CGFloat viewPortScale;
+@property (nonatomic) MBHUD *hud;
 
 @end
 
@@ -36,15 +38,6 @@ static const CGFloat kUpscaleThreshhold = 0.6;
 @implementation MBMyScene
 
 #pragma mark - Utility
-
-- (void)addLabelWithText:(NSString *)text
-{
-    SKLabelNode *textNode = [SKLabelNode labelNodeWithFontNamed:@"Chalkduster"];
-    textNode.text = text;
-    textNode.fontSize = 42;
-    textNode.position = CGPointMake(CGRectGetMidX(self.frame),CGRectGetMidY(self.frame));
-    [self addChild:textNode];
-}
 
 - (int)availableLines
 {
@@ -63,7 +56,12 @@ static const CGFloat kUpscaleThreshhold = 0.6;
 -(id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         self.backgroundColor = [SKColor blackColor];
+        self.viewPort = [SKNode node];
+        [self addChild:self.viewPort];
         self.bonuses = [NSMutableArray array];
+        self.hud = [[MBHUD alloc] init];
+        [self addChild:self.hud];
+        [self.hud setup];
         [self resetGame];
     }
     return self;
@@ -94,9 +92,7 @@ static const CGFloat kUpscaleThreshhold = 0.6;
 
 - (void)resetGame
 {
-    [self.viewPort removeFromParent];
-    self.viewPort = [SKNode node];
-    [self addChild:self.viewPort];
+    [self.viewPort removeAllChildren];
 
     self.viewPortScale = 1.0;
     self.gameState = GSPlaying;
@@ -104,6 +100,7 @@ static const CGFloat kUpscaleThreshhold = 0.6;
     self.previousBlock = nil;
     self.stoppedBlocks = 0;
     self.currentLevel = 1;
+    [self.hud reset];
     [self.bonuses removeAllObjects];
     [self addBlock];
     [self spawnBonus];
@@ -127,7 +124,7 @@ static const CGFloat kUpscaleThreshhold = 0.6;
 
 - (void)showLose
 {
-    [self addLabelWithText:@"You lose!"];
+    [self.hud showLose];
 }
 
 - (kGameState)checkGameState
@@ -150,7 +147,7 @@ static const CGFloat kUpscaleThreshhold = 0.6;
         [self showLose];
         return;
     }
-
+    [self.hud updateScore:self.stoppedBlocks];
     [self addBlock];
 }
 

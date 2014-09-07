@@ -26,6 +26,7 @@
 		DDAC193C19999A5000C35ED4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDAC191719999A5000C35ED4 /* UIKit.framework */; };
 		DDAC194419999A5000C35ED4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DDAC194219999A5000C35ED4 /* InfoPlist.strings */; };
 		DDAC194619999A5000C35ED4 /* MyBlocksTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DDAC194519999A5000C35ED4 /* MyBlocksTests.m */; };
+		DDEF941119BC7D5B000022AC /* MBHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = DDEF941019BC7D5B000022AC /* MBHUD.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,8 @@
 		DDAC194119999A5000C35ED4 /* MyBlocksTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MyBlocksTests-Info.plist"; sourceTree = "<group>"; };
 		DDAC194319999A5000C35ED4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DDAC194519999A5000C35ED4 /* MyBlocksTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyBlocksTests.m; sourceTree = "<group>"; };
+		DDEF940F19BC7D5B000022AC /* MBHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBHUD.h; sourceTree = "<group>"; };
+		DDEF941019BC7D5B000022AC /* MBHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBHUD.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +139,8 @@
 				DDAC192E19999A5000C35ED4 /* MBMyScene.m */,
 				DD3D786C19B918B100DD3EB1 /* MBBonusBlock.h */,
 				DD3D786D19B918B100DD3EB1 /* MBBonusBlock.m */,
+				DDEF940F19BC7D5B000022AC /* MBHUD.h */,
+				DDEF941019BC7D5B000022AC /* MBHUD.m */,
 				DD3D786F19B919D400DD3EB1 /* Globals.h */,
 				DD3D787019B919D400DD3EB1 /* Globals.m */,
 				DDAC193019999A5000C35ED4 /* Spaceship.png */,
@@ -273,6 +278,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DDEF941119BC7D5B000022AC /* MBHUD.m in Sources */,
 				DD3D786E19B918B100DD3EB1 /* MBBonusBlock.m in Sources */,
 				DDAC192219999A5000C35ED4 /* main.m in Sources */,
 				DDAC192F19999A5000C35ED4 /* MBMyScene.m in Sources */,
