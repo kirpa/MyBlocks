@@ -7,13 +7,14 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+#import "MBAbstractBlock.h"
 
 typedef NS_ENUM(NSUInteger, BonusType)
 {
     BTRemoveBlocks3
 };
 
-@interface MBBonusBlock : SKSpriteNode
+@interface MBBonusBlock : MBAbstractBlock
 
 @property (nonatomic) BonusType bonusType;
 

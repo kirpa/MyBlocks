@@ -10,17 +10,22 @@
 
 @implementation MBBonusBlock
 
-+ (UIColor *)colorForType:(BonusType)type
+#pragma mark - Initialization
+
++ (UIColor *)standardColor
 {
     return [UIColor redColor];
 }
 
+- (SKPhysicsBody *)createPhysicsBody
+{
+    return nil;
+}
+
 + (instancetype)bonusWithType:(BonusType)type
 {
-    MBBonusBlock *result = [[self alloc] initWithColor:[self colorForType:type]
-                                                          size:CGSizeMake(kBlockWidth, kBlockWidth)];
-
-
+    MBBonusBlock *result = [self standardBlock];
+    result.bonusType = type;
     return result;
 }
 

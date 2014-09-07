@@ -27,6 +27,8 @@
 		DDAC194419999A5000C35ED4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DDAC194219999A5000C35ED4 /* InfoPlist.strings */; };
 		DDAC194619999A5000C35ED4 /* MyBlocksTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DDAC194519999A5000C35ED4 /* MyBlocksTests.m */; };
 		DDEF941119BC7D5B000022AC /* MBHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = DDEF941019BC7D5B000022AC /* MBHUD.m */; };
+		DDEF941519BCFDE3000022AC /* MBAbstractBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = DDEF941419BCFDE3000022AC /* MBAbstractBlock.m */; };
+		DDEF941819BD0112000022AC /* MBBuildingBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = DDEF941719BD0112000022AC /* MBBuildingBlock.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +71,10 @@
 		DDAC194519999A5000C35ED4 /* MyBlocksTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyBlocksTests.m; sourceTree = "<group>"; };
 		DDEF940F19BC7D5B000022AC /* MBHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBHUD.h; sourceTree = "<group>"; };
 		DDEF941019BC7D5B000022AC /* MBHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBHUD.m; sourceTree = "<group>"; };
+		DDEF941319BCFDE3000022AC /* MBAbstractBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBAbstractBlock.h; sourceTree = "<group>"; };
+		DDEF941419BCFDE3000022AC /* MBAbstractBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBAbstractBlock.m; sourceTree = "<group>"; };
+		DDEF941619BD0112000022AC /* MBBuildingBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBBuildingBlock.h; sourceTree = "<group>"; };
+		DDEF941719BD0112000022AC /* MBBuildingBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBBuildingBlock.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +136,7 @@
 		DDAC191B19999A5000C35ED4 /* MyBlocks */ = {
 			isa = PBXGroup;
 			children = (
+				DDEF941219BCFDC9000022AC /* Blocks */,
 				DDAC192419999A5000C35ED4 /* MBAppDelegate.h */,
 				DDAC192519999A5000C35ED4 /* MBAppDelegate.m */,
 				DDAC192719999A5000C35ED4 /* Main.storyboard */,
@@ -137,8 +144,6 @@
 				DDAC192B19999A5000C35ED4 /* MBViewController.m */,
 				DDAC192D19999A5000C35ED4 /* MBMyScene.h */,
 				DDAC192E19999A5000C35ED4 /* MBMyScene.m */,
-				DD3D786C19B918B100DD3EB1 /* MBBonusBlock.h */,
-				DD3D786D19B918B100DD3EB1 /* MBBonusBlock.m */,
 				DDEF940F19BC7D5B000022AC /* MBHUD.h */,
 				DDEF941019BC7D5B000022AC /* MBHUD.m */,
 				DD3D786F19B919D400DD3EB1 /* Globals.h */,
@@ -177,6 +182,19 @@
 				DDAC194219999A5000C35ED4 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DDEF941219BCFDC9000022AC /* Blocks */ = {
+			isa = PBXGroup;
+			children = (
+				DDEF941319BCFDE3000022AC /* MBAbstractBlock.h */,
+				DDEF941419BCFDE3000022AC /* MBAbstractBlock.m */,
+				DDEF941619BD0112000022AC /* MBBuildingBlock.h */,
+				DDEF941719BD0112000022AC /* MBBuildingBlock.m */,
+				DD3D786C19B918B100DD3EB1 /* MBBonusBlock.h */,
+				DD3D786D19B918B100DD3EB1 /* MBBonusBlock.m */,
+			);
+			name = Blocks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -279,7 +297,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				DDEF941119BC7D5B000022AC /* MBHUD.m in Sources */,
+				DDEF941819BD0112000022AC /* MBBuildingBlock.m in Sources */,
 				DD3D786E19B918B100DD3EB1 /* MBBonusBlock.m in Sources */,
+				DDEF941519BCFDE3000022AC /* MBAbstractBlock.m in Sources */,
 				DDAC192219999A5000C35ED4 /* main.m in Sources */,
 				DDAC192F19999A5000C35ED4 /* MBMyScene.m in Sources */,
 				DDAC192C19999A5000C35ED4 /* MBViewController.m in Sources */,

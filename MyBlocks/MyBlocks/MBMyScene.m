@@ -8,6 +8,7 @@
 
 #import "MBMyScene.h"
 #import "MBBonusBlock.h"
+#import "MBBuildingBlock.h"
 #import "MBHUD.h"
 
 typedef NS_ENUM(NSUInteger, kGameState)
@@ -193,17 +194,6 @@ static const CGFloat kUpscaleThreshhold = 0.6;
     }];
 }
 
-- (UIColor *)randomColor
-{
-    CGFloat red = arc4random_uniform(255) / 255.0;
-    CGFloat green = arc4random_uniform(255) / 255.0;
-    CGFloat blue = arc4random_uniform(255) / 255.0;
-    if (red + green + blue < 0.15f)
-        return [UIColor blueColor];
-
-    return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
-}
-
 - (CGPoint)randomPositionForY:(CGFloat)y
 {
     return CGPointMake(arc4random_uniform(self.size.width), y);
@@ -211,8 +201,7 @@ static const CGFloat kUpscaleThreshhold = 0.6;
 
 - (void)addBlock
 {
-    SKSpriteNode *result = [[SKSpriteNode alloc] initWithColor:[self randomColor]
-                                                          size:CGSizeMake(kBlockWidth, kBlockWidth)];
+    MBBuildingBlock *result = [MBBuildingBlock standardBlock];
     CGFloat nextLine;
     if (self.currentBlock){
         nextLine = self.currentBlock.position.y + result.size.height;

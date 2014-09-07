@@ -28,7 +28,7 @@ static const CGFloat kScoreOffsetX = 50.;
         [self addChild:self.centralLabel];
     }
 
-    self.centralLabel.text = @"You lose";
+    self.centralLabel.text = NSLocalizedString(@"You lose", nil);
 }
 
 - (void)reset
