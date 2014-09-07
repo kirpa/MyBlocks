@@ -96,6 +96,7 @@ static const CGFloat kUpscaleThreshhold = 0.6;
     [self.viewPort removeAllChildren];
 
     self.viewPortScale = 1.0;
+    self.viewPort.xScale = self.viewPort.yScale = self.viewPortScale;
     self.gameState = GSPlaying;
     self.currentBlock = nil;
     self.previousBlock = nil;
