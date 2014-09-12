@@ -10,21 +10,40 @@
 
 @implementation MBBonusBlock
 
-#pragma mark - Initialization
 
-+ (UIColor *)standardColor
+#pragma mark - Other methods
+
+- (void)consume
 {
-    return [UIColor redColor];
+    SKAction *shrink = [SKAction scaleBy:0.9 duration:0.2];
+    SKAction *enlarge = [SKAction scaleBy:1.3 duration:0.1];
+    [self runAction:[SKAction sequence:@[shrink, enlarge]] completion:^(){
+        [self removeFromParent];
+    }];
 }
 
-- (SKPhysicsBody *)createPhysicsBody
+#pragma mark - Initialization
+
++ (NSString *)imageNameForType:(BonusType)type
 {
-    return nil;
+    switch (type) {
+        case BTRemoveBlocks3:
+            return @"Blue-Candy.png";
+        case BTRemoveBlocks5:
+            return @"Green-Candy.png";
+        case BTAddBlocks3:
+            return @"Pink-Candy.png";
+        case BTAddBlocks5:
+            return @"Yellow-Candy.png";
+        case BTTotalBonusCount:
+            NSAssert(YES, @"Wrong bonus type specified!");
+            return nil;
+    }
 }
 
 + (instancetype)bonusWithType:(BonusType)type
 {
-    MBBonusBlock *result = [self standardBlock];
+    MBBonusBlock *result = [[self alloc] initWithImageNamed:[self imageNameForType:type]];
     result.bonusType = type;
     return result;
 }

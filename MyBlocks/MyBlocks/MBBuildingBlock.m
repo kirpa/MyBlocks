@@ -23,13 +23,4 @@
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
-- (SKPhysicsBody *)setupPhysicsBody:(SKPhysicsBody *)body
-{
-    body = [super setupPhysicsBody:body];
-    body.categoryBitMask = MBColliderTypeBlock;
-    body.collisionBitMask = MBColliderTypeBlock;
-
-    return body;
-}
-
 @end

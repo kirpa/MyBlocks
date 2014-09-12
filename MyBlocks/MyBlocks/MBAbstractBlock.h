@@ -14,7 +14,5 @@
 
 + (UIColor *)standardColor;
 + (CGSize)standardSize;
-- (SKPhysicsBody *)setupPhysicsBody:(SKPhysicsBody *)body;
-- (SKPhysicsBody *)createPhysicsBody;
 
 @end

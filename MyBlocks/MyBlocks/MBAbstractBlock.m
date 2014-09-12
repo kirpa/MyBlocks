@@ -13,17 +13,6 @@
 
 #pragma mark - Init
 
-- (SKPhysicsBody *)setupPhysicsBody:(SKPhysicsBody *)body
-{
-    body.affectedByGravity = NO;
-    return body;
-}
-
-- (SKPhysicsBody *)createPhysicsBody
-{
-    return [SKPhysicsBody bodyWithRectangleOfSize:self.size];
-}
-
 + (UIColor *)standardColor
 {
     NSAssert (YES, @"Abstract method call");
@@ -39,7 +28,6 @@
 + (instancetype)standardBlock
 {
     MBAbstractBlock *result = [[self alloc] initWithColor:[self standardColor] size:[self standardSize]];
-    result.physicsBody = [result setupPhysicsBody:[result createPhysicsBody]];
     return result;
 }
 

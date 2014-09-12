@@ -14,18 +14,20 @@
 typedef NS_ENUM(NSUInteger, kGameState)
 {
     GSPlaying,
-    GSLose
+    GSLose,
+    GSConsumingBonus
 };
 
 @interface MBMyScene()
 
 @property (nonatomic) SKNode *viewPort;
-@property (nonatomic) SKSpriteNode *previousBlock;
-@property (nonatomic) SKSpriteNode *currentBlock;
+@property (nonatomic) MBBuildingBlock *previousBlock;
+@property (nonatomic) MBBuildingBlock *currentBlock;
 @property (nonatomic) int stoppedBlocks;
 @property (nonatomic) kGameState gameState;
 @property (nonatomic) int currentLevel;
 @property (nonatomic) NSMutableArray *bonuses;
+@property (nonatomic) NSMutableArray *blocks;
 @property (nonatomic) CGFloat viewPortScale;
 @property (nonatomic) MBHUD *hud;
 
@@ -34,7 +36,13 @@ typedef NS_ENUM(NSUInteger, kGameState)
 static const NSTimeInterval kDefaultBlockMovementDuration = 2.0;
 static const NSTimeInterval kViewportScaleDuration = 1.0;
 static const CGFloat kScaleStep = 0.8;
-static const CGFloat kUpscaleThreshhold = 0.6;
+static const CGFloat kUpscaleThreshhold = 0.7;
+static const CGFloat kBlockAutomovingDuration = 0.3;
+static const CGFloat kTowerDropDuration = 0.3;
+static const CGFloat kSerialActionDelay = 0.1;
+
+static const CGFloat kBlockZ = 10.;
+static const CGFloat kHUDZ = 30.;
 
 @implementation MBMyScene
 
@@ -52,49 +60,92 @@ static const CGFloat kUpscaleThreshhold = 0.6;
     return self.size.height / self.viewPortScale;
 }
 
-#pragma mark - Object lifecycle
+#pragma mark - Bonus system
 
--(id)initWithSize:(CGSize)size {
-    if (self = [super initWithSize:size]) {
-        self.backgroundColor = [SKColor blackColor];
-        self.viewPort = [SKNode node];
-        [self addChild:self.viewPort];
-        self.bonuses = [NSMutableArray array];
-        self.hud = [[MBHUD alloc] init];
-        [self addChild:self.hud];
-        [self.hud setup];
-        [self resetGame];
-    }
-    return self;
-}
-
-- (void)didMoveToView:(SKView *)view
+- (BOOL)checkForBonuses
 {
-    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapRecognized)];
-    tapRecognizer.numberOfTapsRequired = 1;
-    [self.view addGestureRecognizer:tapRecognizer];
+    MBBonusBlock *collectedBonus = [self collectedBonusForBlock:self.currentBlock];
+    if (collectedBonus){
+        [self consumeBonus:collectedBonus];
+        return YES;
+    }
 
-    UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc]
-                                                 initWithTarget:self action:@selector(swipeRecognized)];
-    swipeRecognizer.direction = UISwipeGestureRecognizerDirectionRight | UISwipeGestureRecognizerDirectionLeft | UISwipeGestureRecognizerDirectionUp | UISwipeGestureRecognizerDirectionDown;
-    [self.view addGestureRecognizer:swipeRecognizer];
+    return NO;
 }
 
+- (MBBonusBlock *)collectedBonusForBlock:(MBBuildingBlock *)block
+{
+    for (MBBonusBlock *bonus in self.bonuses){
+        if ([bonus intersectsNode:block])
+            return bonus;
+    }
+
+    return nil;
+}
+
+- (void)consumeBonus:(MBBonusBlock *)bonus
+{
+    self.gameState = GSConsumingBonus;
+    [bonus consume];
+    [self.bonuses removeObject:bonus];
+    __weak __typeof(self) weakSelf = self;
+    void (^restoreGame)() = ^void(){
+        weakSelf.gameState = GSPlaying;
+        [self addBlock];
+    };
+    [self removeMultipleBlocks:3 completion:^(){
+        [weakSelf dropDownTheTowerCompletion:^{
+            restoreGame();
+        }];
+    }];
+}
+
+- (void)removeMultipleBlocks:(int)count completion:(void(^)(void))completion
+{
+    if (count > 0) {
+        [self removeBlockAnimated:YES completion:nil];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kSerialActionDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self removeMultipleBlocks:count - 1 completion:completion];
+        });
+    } else {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kSerialActionDelay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if (completion)
+                completion();
+        });
+    }
+}
+
+#pragma mark - Block modification
+
+- (void)dropDownTheTowerCompletion:(void(^)(void))completion
+{
+    MBBuildingBlock *firstBlock = [self.blocks firstObject];
+    CGFloat gap = CGRectGetMinY(firstBlock.frame);
+    if (gap > 0) {
+        SKAction *dropDown = [SKAction moveByX:0 y:-gap duration:kTowerDropDuration];
+        [self.blocks makeObjectsPerformSelector:@selector(runAction:) withObject:dropDown];
+        [firstBlock runAction:[SKAction waitForDuration:kTowerDropDuration] completion:completion];
+    }
+}
+
+- (void)removeBlockAnimated:(BOOL)animated completion:(void(^)(void))completion
+{
+    if (self.blocks.count > 1) {
+        MBBuildingBlock *block = [self.blocks firstObject];
+        [self.blocks removeObject:block];
+        SKAction *moveAction = [SKAction moveToX:-kBlockWidth duration:animated ? kBlockAutomovingDuration : 0.0f];
+        [block runAction:moveAction completion:completion];
+    } else {
+        if (completion)
+            completion();
+    }
+}
 
 #pragma mark - Gameplay
-
-- (void)lowerBlock
-{
-    [self.currentBlock removeAllActions];
-    self.currentBlock.position = CGPointMake(self.currentBlock.position.x, self.currentBlock.position.y - kBlockWidth);
-    [self animateBlock:self.currentBlock];
-    [self checkScale];
-}
 
 - (void)resetGame
 {
     [self.viewPort removeAllChildren];
-
     self.viewPortScale = 1.0;
     self.viewPort.xScale = self.viewPort.yScale = self.viewPortScale;
     self.gameState = GSPlaying;
@@ -104,6 +155,7 @@ static const CGFloat kUpscaleThreshhold = 0.6;
     self.currentLevel = 1;
     [self.hud reset];
     [self.bonuses removeAllObjects];
+    [self.blocks removeAllObjects];
     [self addBlock];
     [self spawnBonus];
 }
@@ -118,10 +170,13 @@ static const CGFloat kUpscaleThreshhold = 0.6;
         self.currentLevel++;
         [self spawnBonus];
     } else if (self.currentLevel > 1 && visiblePortion * kUpscaleThreshhold > visibleBlockTop) {
+        NSLog(@"Downscellado!");
         CGFloat nextScale = MIN(self.viewPort.yScale / kScaleStep, 1.0);
         [self scaleViewportTo:nextScale];
         self.currentLevel--;
     }
+
+    NSLog(@"VIs: %.0f -> %.0f", visiblePortion * kUpscaleThreshhold, visibleBlockTop);
 }
 
 - (void)showLose
@@ -150,7 +205,9 @@ static const CGFloat kUpscaleThreshhold = 0.6;
         return;
     }
     [self.hud updateScore:self.stoppedBlocks];
-    [self addBlock];
+
+    if (![self checkForBonuses])
+        [self addBlock];
 }
 
 #pragma mark - Spawning and animations
@@ -163,7 +220,8 @@ static const CGFloat kUpscaleThreshhold = 0.6;
 
 - (MBBonusBlock *)spawnBonusWithAvailableLines:(int)lines
 {
-    MBBonusBlock *result = [MBBonusBlock bonusWithType:BTRemoveBlocks3];
+    BonusType type = arc4random_uniform(BTTotalBonusCount);
+    MBBonusBlock *result = [MBBonusBlock bonusWithType:type];
     int destinationLine = arc4random_uniform(lines) + 1;
     CGFloat destinationY = self.currentBlock.position.y + kBlockWidth * destinationLine;
     result.position = [self randomPositionForY:destinationY];
@@ -188,7 +246,7 @@ static const CGFloat kUpscaleThreshhold = 0.6;
     self.size.width - block.size.width / 2 :
     block.size.width / 2;
 
-    SKAction *moveAction = [SKAction moveTo:CGPointMake(nextX, block.position.y) duration:duration];
+    SKAction *moveAction = [SKAction moveToX:nextX duration:duration];
     __weak SKSpriteNode *weakBlock = block;
     [block runAction:moveAction completion:^(){
         [self animateBlock:weakBlock];
@@ -210,26 +268,43 @@ static const CGFloat kUpscaleThreshhold = 0.6;
         nextLine = result.size.height / 2;
     }
     result.position = [self randomPositionForY:nextLine];
+    result.zPosition = kBlockZ;
     [self animateBlock:result];
     [self.viewPort addChild:result];
     self.previousBlock = self.currentBlock;
     self.currentBlock = result;
+    [self.blocks addObject:result];
     [self checkScale];
 }
 
 #pragma mark - User controls
 
-- (void)tapRecognized
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     if (self.gameState == GSPlaying)
         [self stopCurrentBlock];
-    else
+    else if (self.gameState == GSLose)
         [self resetGame];
 }
 
-- (void)swipeRecognized
+#pragma mark - Object lifecycle
+
+-(id)initWithSize:(CGSize)size
 {
-    [self lowerBlock];
+    if (self = [super initWithSize:size]) {
+        self.backgroundColor = [SKColor blackColor];
+        self.viewPort = [SKNode node];
+        [self addChild:self.viewPort];
+        self.bonuses = [NSMutableArray array];
+        self.blocks = [NSMutableArray array];
+        self.hud = [[MBHUD alloc] init];
+        self.hud.zPosition = kHUDZ;
+        [self addChild:self.hud];
+        [self.hud setup];
+        [self resetGame];
+    }
+
+    return self;
 }
 
 @end
